@@ -20,16 +20,11 @@ export default function LoginScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const colors = Colors[colorScheme ?? 'light'];
-  const { signIn, user, loading: authLoading } = useAuth();
+  const { signIn, loading: authLoading } = useAuth(); // Remove user from destructuring
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-
-  // If user is already logged in, this screen shouldn't be visible due to route protection
-  if (user) {
-    return null;
-  }
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -40,7 +35,7 @@ export default function LoginScreen() {
     setIsLoggingIn(true);
     try {
       await signIn(email, password);
-      // Navigation is handled by route protection
+      // Navigation is handled by route protection - don't do anything here
     } catch (error: any) {
       Alert.alert('Login Failed', error.message);
     } finally {
@@ -70,42 +65,46 @@ export default function LoginScreen() {
         <View style={styles.form}>
           <TextInput
             style={[styles.input, { 
-              backgroundColor: colors.inputBackground,
+              backgroundColor: colors.inputBackground || colors.card,
               borderColor: colors.border,
               color: colors.text 
             }]}
             placeholder="Email"
-            placeholderTextColor={colors.placeholder}
+            placeholderTextColor={colors.placeholder || colors.secondaryText}
             keyboardType="email-address"
             autoCapitalize="none"
             value={email}
             onChangeText={setEmail}
-            editable={!isLoggingIn}
+            editable={!isLoggingIn && !authLoading}
           />
           
           <TextInput
             style={[styles.input, { 
-              backgroundColor: colors.inputBackground,
+              backgroundColor: colors.inputBackground || colors.card,
               borderColor: colors.border,
               color: colors.text 
             }]}
             placeholder="Password"
-            placeholderTextColor={colors.placeholder}
+            placeholderTextColor={colors.placeholder || colors.secondaryText}
             secureTextEntry
             value={password}
             onChangeText={setPassword}
-            editable={!isLoggingIn}
+            editable={!isLoggingIn && !authLoading}
           />
           
           <TouchableOpacity 
             style={[
               styles.loginButton, 
-              { backgroundColor: isLoggingIn ? colors.disabled : colors.tint }
+              { 
+                backgroundColor: (isLoggingIn || authLoading) 
+                  ? (colors.disabled || '#cccccc') 
+                  : colors.tint 
+              }
             ]}
             onPress={handleLogin}
-            disabled={isLoggingIn}
+            disabled={isLoggingIn || authLoading}
           >
-            {isLoggingIn ? (
+            {(isLoggingIn || authLoading) ? (
               <ActivityIndicator color="#ffffff" />
             ) : (
               <Text style={styles.loginButtonText}>Login</Text>
@@ -116,7 +115,7 @@ export default function LoginScreen() {
         <TouchableOpacity 
           style={styles.signUpContainer}
           onPress={() => router.push('/modal')}
-          disabled={isLoggingIn}
+          disabled={isLoggingIn || authLoading}
         >
           <Text style={[styles.signUpText, { color: colors.secondaryText }]}>
             Don't have an account? <Text style={[styles.signUpLink, { color: colors.tint }]}>Sign Up</Text>

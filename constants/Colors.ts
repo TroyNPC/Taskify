@@ -1,0 +1,31 @@
+// constants/Colors.ts
+export default {
+  light: {
+    text: '#000000',
+    background: '#ffffff',
+    tint: '#007AFF',
+    secondaryText: '#666666',
+    border: '#dddddd',
+    inputBackground: '#f9f9f9',
+    placeholder: '#999999',
+    card: '#f8f8f8',
+    disabled: '#cccccc',
+    success: '#34C759',
+    warning: '#FF9500',
+    error: '#FF3B30',
+  },
+  dark: {
+    text: '#ffffff',
+    background: '#000000',
+    tint: '#0A84FF',
+    secondaryText: '#8E8E93',
+    border: '#38383A',
+    inputBackground: '#1C1C1E',
+    placeholder: '#8E8E93',
+    card: '#1C1C1E',
+    disabled: '#3A3A3C',
+    success: '#30D158',
+    warning: '#FF9F0A',
+    error: '#FF453A',
+  },
+};
