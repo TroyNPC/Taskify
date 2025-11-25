@@ -73,22 +73,23 @@ export const projectServices = {
     if (error) throw error;
     return data;
   },
+async deleteProject(id: string, ownerId: string) {
+  // Use the database function instead of direct delete
+  const { error } = await supabase.rpc('delete_project_and_tasks', { 
+    project_id: id 
+  });
+  
+  if (error) throw error;
 
-  async deleteProject(id: string, ownerId: string) {
-    const { error } = await supabase.from('projects').delete().eq('id', id).eq('owner_id', ownerId);
-    if (error) throw error;
-
-    // notify listeners so UI (dashboard) can refresh live
-    try {
-      // guard in case emitter isn't defined or doesn't have emit
-      if (emitter && typeof (emitter as any).emit === 'function') {
-        (emitter as any).emit('refreshDashboard');
-      }
-    } catch (e) {
-      // swallow emitter errors — deletion already succeeded
-      console.warn('refresh emit failed', e);
+  // notify listeners so UI (dashboard) can refresh live
+  try {
+    if (emitter && typeof (emitter as any).emit === 'function') {
+      (emitter as any).emit('refreshDashboard');
     }
-
-    return true;
+  } catch (e) {
+    console.warn('refresh emit failed', e);
   }
+
+  return true;
+}
 };
